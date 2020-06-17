@@ -1,0 +1,24 @@
+.App {
+  text-align: center;
+}
+
+input {
+  padding: 0.275rem 0.5rem;
+  font-size: 15px;
+  color: #595959;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+label {
+  font-size: 15px;
+  color: #545454;
+}
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}

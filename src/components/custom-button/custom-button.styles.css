@@ -1,0 +1,73 @@
+.btn {
+  display: inline-block;
+  -webkit-user-select: none;
+  margin: 5px;
+  user-select: none;
+  border: none;
+  min-width: 100px;
+  padding: 7px 10px;
+  font-size: 15px;
+  border-radius: 5px;
+  border: 2px solid #9e9e9e;
+  cursor: pointer;
+}
+
+.btn-game-control {
+  color: #1b1b1b;
+  border-radius: 20px;
+  border: 2px solid;
+  font-size: 20px;
+  background-color: inherit;
+  min-width: 0px;
+  width: 40px;
+  height: 40px;
+  margin: 15px;
+}
+
+.btn-success {
+  color: #255827;
+  font-weight: 600;
+  background-color: #e8fee9;
+  border: 2px solid #4caf50;
+  padding: 5px 5px;
+}
+
+.btn-danger {
+  color: #850900;
+  font-weight: 600;
+  background-color: #feeae9;
+  border: 2px solid #f6746b;
+  padding: 5px 5px;
+}
+
+.btn-start {
+  color: #003a67;
+  font-weight: 600;
+  background-color: #9fd4fd;
+  border: 2px solid #2196f3;
+}
+
+.btn-pause {
+  color: #282828;
+  font-weight: 600;
+  background-color: #d9d9d9;
+  border: 2px solid #9e9e9e;
+}
+
+.btn-resume {
+  color: #196c1d;
+  font-weight: 600;
+  background-color: #9feca2;
+  border: 2px solid #4caf50;
+}
+
+.btn-restart {
+  color: #ca0e00;
+  font-weight: 600;
+  background-color: #ffc107;
+  border: 2px solid #ff9800;
+}
+
+.btn-circle {
+  border-radius: 20px;
+}
