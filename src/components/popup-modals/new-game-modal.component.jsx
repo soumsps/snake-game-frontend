@@ -2,39 +2,52 @@ import React, { useEffect, useRef, memo } from 'react';
 import Modal from '../modal/modal.component';
 import { navigate } from '@reach/router';
 
-const NewGameModal = (props) => {
+const NewGameModal = ({ ws, playerID, playerName, closeModalCallback }) => {
   const gameID = useRef(null);
 
   useEffect(() => {
-    console.log('new game modal: ', props.ws.current);
-
-    props.ws.current.onmessage = (message) => {
+    ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
-      if (res.method === 'CONNECT') {
-        props.playerID.current = res.props.playerID;
+      if (res.method === 'CONNECT' && !playerID.current) {
+        playerID.current = res.playerID;
       }
+
+      if (res.method === 'JOINED') {
+        console.log(res.food);
+        // navigate to multiplayer game link
+        navigate(`multiplayer/${gameID.current}`);
+      }
+
       if (res.method === 'CREATED') {
         console.log(`game id is`, res.game.id);
         gameID.current = res.game.id;
-        navigate(`multiplayer/${gameID.current}`);
+
+        // send request to join game by host
+        const payLoad = {
+          method: 'JOIN',
+          playerID: playerID.current,
+          gameID: gameID.current,
+          playerName: playerName.current,
+        };
+        ws.current.send(JSON.stringify(payLoad));
       }
     };
-  }, [props.playerID, props.ws]);
+  }, [playerID, ws, playerName]);
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();
     const payLoad = {
       method: 'CREATE',
-      playerID: props.playerID.current,
-      playerName: props.playerName.current,
+      playerID: playerID.current,
+      playerName: playerName.current,
     };
-    props.ws.current.send(JSON.stringify(payLoad));
+    ws.current.send(JSON.stringify(payLoad));
 
     console.log('newGame form submit');
   };
 
   return (
-    <Modal closeModalCallback={props.closeModalCallback}>
+    <Modal closeModalCallback={closeModalCallback}>
       <Modal.Header closeButton>
         <Modal.Title>Create Game Room</Modal.Title>
       </Modal.Header>
@@ -49,7 +62,7 @@ const NewGameModal = (props) => {
               required
               data-first-focusable="true"
               onChange={(event) => {
-                props.playerName.current = event.target.value;
+                playerName.current = event.target.value;
               }}
             />
           </div>

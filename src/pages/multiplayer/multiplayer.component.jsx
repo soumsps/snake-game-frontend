@@ -30,7 +30,7 @@ import {
 } from '../../game-utility/constant';
 import './multiplayer.styles.css';
 
-const MultiplayerPage = (props) => {
+const MultiplayerPage = ({ gameId, ws, playerID, playerName }) => {
   const browserWindowSize = useCallback(useWindowSize());
   const [
     isLeaveMultiplayerModalOpen,
@@ -49,37 +49,20 @@ const MultiplayerPage = (props) => {
   const gameBoardRef = useRef(null);
   const lastSnakeMoveTimeRef = useRef(0);
 
-  console.log('gameId: ', props.gameId);
-  const gameID = useRef(props.gameId);
+  const gameID = useRef(gameId);
 
   useEffect(() => {
-    if (!props.ws.current) return;
+    if (!ws.current) return;
 
-    console.log(props.ws.current);
-
-    props.ws.current.onmessage = (message) => {
+    ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
       console.log('response: ', res);
-      if (res.method === 'CONNECT' && !props.playerID.current) {
-        props.playerID.current = res.playerID;
-        console.log(props.playerID.current);
-      }
-
-      if (res.method === 'JOINED') {
-        console.log(res.food);
+      if (res.method === 'CONNECT' && !playerID.current) {
+        playerID.current = res.playerID;
+        console.log(playerID.current);
       }
     };
-
-    if (props.playerName.current) {
-      const payLoad = {
-        method: 'JOIN',
-        playerID: props.playerID.current,
-        gameID: gameID.current,
-        playerName: props.playerName.current,
-      };
-      props.ws.current.send(JSON.stringify(payLoad));
-    }
-  }, [props.playerID, props.ws, props.playerName]);
+  }, [playerID, ws]);
 
   const updateData = useCallback(() => {
     if (isSnakeDead(snakeRef, boardSize)) {
@@ -154,7 +137,7 @@ const MultiplayerPage = (props) => {
         </div>
       </header>
 
-      {!props.playerName.current ? (
+      {!playerName.current ? (
         <div className="join-game-alert">
           <div className="join-alert-text">
             <h4 style={{ margin: '0', fontWeight: '400' }}>
@@ -196,16 +179,16 @@ const MultiplayerPage = (props) => {
       {isJoinGameModalOpen && (
         <JoinGameModal
           closeModalCallback={setIsJoinGameModalOpen}
-          gameId={props.gameId}
-          ws={props.ws}
-          playerID={props.playerID}
-          playerName={props.playerName}
+          gameID={gameID}
+          ws={ws}
+          playerID={playerID}
+          playerName={playerName}
         />
       )}
       {isLeaveMultiplayerModalOpen && (
         <LeaveMultiplayerModal
           closeModalCallback={setIsLeaveMultiplayerModalOpen}
-          ws={props.ws}
+          ws={ws}
         />
       )}
     </div>

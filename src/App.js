@@ -41,7 +41,6 @@ function App() {
       console.log('response: ', res);
       if (res.method === 'CONNECT' && !playerID.current) {
         playerID.current = res.playerID;
-        console.log(playerID.current);
       }
     };
   }, [keepAlive, cancelKeepAlive]);

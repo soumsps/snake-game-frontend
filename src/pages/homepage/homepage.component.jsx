@@ -29,7 +29,7 @@ import {
 } from '../../game-utility/constant';
 import './homepage.styles.css';
 
-const HomePage = (props) => {
+const HomePage = ({ ws, playerID, playerName }) => {
   const browserWindowSize = useCallback(useWindowSize());
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
   const [boardSize] = useState({ ...DEFAULT_BOARD_SIZE });
@@ -156,9 +156,9 @@ const HomePage = (props) => {
       {isNewGameModalOpen && (
         <NewGameModal
           closeModalCallback={setIsNewGameModalOpen}
-          ws={props.ws}
-          playerID={props.playerID}
-          playerName={props.playerName}
+          ws={ws}
+          playerID={playerID}
+          playerName={playerName}
         />
       )}
     </div>

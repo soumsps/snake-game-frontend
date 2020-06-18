@@ -2,14 +2,13 @@ import React, { memo } from 'react';
 import Modal from '../modal/modal.component';
 import { navigate } from '@reach/router';
 
-const LeaveMultiplayerModal = (props) => {
+const LeaveMultiplayerModal = ({ closeModalCallback }) => {
   const handleLeaveMultiplayerMode = (event) => {
-    // props.ws.close(1000, 'Leaving');
     navigate('/');
     console.log('leave multiplayer mode confirmed');
   };
   return (
-    <Modal closeModalCallback={props.closeModalCallback}>
+    <Modal closeModalCallback={closeModalCallback}>
       <Modal.Header closeButton>
         <Modal.Title>Leave Game Room</Modal.Title>
       </Modal.Header>

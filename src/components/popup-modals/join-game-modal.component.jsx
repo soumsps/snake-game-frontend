@@ -1,37 +1,41 @@
-import React, { memo, useRef, useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import Modal from '../modal/modal.component';
 
-const JoinGameModal = (props) => {
-  const gameID = useRef(props.gameId);
-
+const JoinGameModal = ({
+  ws,
+  gameID,
+  playerID,
+  playerName,
+  closeModalCallback,
+}) => {
   useEffect(() => {
-    props.ws.current.onmessage = (message) => {
+    ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
       console.log(res);
-      if (res.method === 'CONNECT' && !props.playerID.current) {
-        props.playerID.current = res.playerID;
+      if (res.method === 'CONNECT' && !playerID.current) {
+        playerID.current = res.playerID;
       }
 
       if (res.method === 'JOINED') {
-        props.closeModalCallback(false);
+        closeModalCallback(false);
         console.log(res.food);
       }
     };
-  }, [props.playerID, props.ws]);
+  }, [playerID, ws, closeModalCallback]);
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();
     const payLoad = {
       method: 'JOIN',
-      playerID: props.playerID.current,
+      playerID: playerID.current,
       gameID: gameID.current,
-      playerName: props.playerName.current,
+      playerName: playerName.current,
     };
-    props.ws.current.send(JSON.stringify(payLoad));
+    ws.current.send(JSON.stringify(payLoad));
     console.log('join game form submit');
   };
   return (
-    <Modal closeModalCallback={props.closeModalCallback}>
+    <Modal closeModalCallback={closeModalCallback}>
       <Modal.Header closeButton>
         <Modal.Title>Join Game</Modal.Title>
       </Modal.Header>
@@ -46,7 +50,7 @@ const JoinGameModal = (props) => {
               required
               data-first-focusable="true"
               onChange={(event) => {
-                props.playerName.current = event.target.value;
+                playerName.current = event.target.value;
               }}
             />
           </div>
