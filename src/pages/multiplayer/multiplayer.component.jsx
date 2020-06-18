@@ -8,21 +8,8 @@ import CustomButton from '../../components/custom-button/custom-button.component
 import { useWindowSize } from '../../custom-hooks/use-window-size.hook';
 import { useGameLoop } from '../../custom-hooks/use-game-loop.hook';
 import { calculateBlockSize } from '../../game-utility/game-board';
-import {
-  drawSnake,
-  moveSnake,
-  getSnakeHead,
-  growSnake,
-  isSnakeDead,
-  getNextSnakeHeadPosition,
-  updateSnakeSpeed,
-} from '../../game-utility/snake';
-import {
-  drawFood,
-  getRandomFoodPosition,
-  isFoodEaten,
-  removeOldFood,
-} from '../../game-utility/food';
+import { drawSnake } from '../../game-utility/snake';
+import { drawFood } from '../../game-utility/food';
 import {
   DEFAULT_BOARD_SIZE,
   DEFAULT_GAME_STATUS,
@@ -50,21 +37,26 @@ const MultiplayerPage = ({
   // possible modes: not-started, playing, paused, and finished
   const [gameStatus, setGameStatus] = useState(DEFAULT_GAME_STATUS);
 
-  const snakeRef = useRef({ ...DEFAULT_SNAKE_DATA });
-  const foodPositionRef = useRef(null);
+  const snakeRef = useRef(null);
+  const snakesData = useRef([]);
+  const foodPositionRef = useRef([1, 1]);
   const gameBoardRef = useRef(null);
-  const lastSnakeMoveTimeRef = useRef(0);
 
   const gameID = useRef(gameId);
-  console.log('multiplayer update');
 
   const fireOnMessage = useCallback(() => {
     ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
-      console.log('response: ', res);
+
       if (res.method === 'CONNECT' && !playerID.current) {
         playerID.current = res.playerID;
         console.log(playerID.current);
+      }
+
+      if (res.method === 'UPDATE') {
+        console.log(res.game);
+        snakesData.current = res.game.players;
+        foodPositionRef.current = res.food;
       }
     };
   }, [playerID, ws]);
@@ -74,53 +66,19 @@ const MultiplayerPage = ({
     fireOnMessage();
   }, [ws, fireOnMessage]);
 
-  const updateData = useCallback(() => {
-    if (isSnakeDead(snakeRef, boardSize)) {
-      setGameStatus('finished');
-      return;
-    }
-
-    moveSnake(getNextSnakeHeadPosition(snakeRef), snakeRef);
-
-    if (
-      isFoodEaten(getSnakeHead(snakeRef.current.body), foodPositionRef.current)
-    ) {
-      growSnake(snakeRef.current.body);
-      removeOldFood(gameBoardRef.current);
-      foodPositionRef.current = getRandomFoodPosition(boardSize);
-
-      updateSnakeSpeed(snakeRef);
-    }
-  }, [boardSize]);
-
-  const drawData = useCallback(() => {
-    drawSnake(gameBoardRef.current, [snakeRef.current]);
+  // runs every 16.67ms
+  const update = useCallback((currentTime) => {
+    drawSnake(gameBoardRef.current, snakesData.current);
     drawFood(gameBoardRef.current, foodPositionRef.current);
   }, []);
-
-  // runs every 16.67ms
-  const update = useCallback(
-    (currentTime) => {
-      const secondsSinceLastSnakeMove =
-        currentTime - lastSnakeMoveTimeRef.current;
-      if (secondsSinceLastSnakeMove > snakeRef.current.speed) {
-        lastSnakeMoveTimeRef.current = currentTime;
-        if (gameStatus === 'playing') {
-          updateData();
-        }
-      }
-      drawData();
-    },
-    [updateData, drawData, gameStatus]
-  );
 
   const onRestartButtonPress = (snakeRef) => {
     snakeRef.current = { ...DEFAULT_SNAKE_DATA };
   };
 
-  useEffect(() => {
-    foodPositionRef.current = getRandomFoodPosition(boardSize);
-  }, [boardSize]);
+  // useEffect(() => {
+  //   foodPositionRef.current = getRandomFoodPosition(boardSize);
+  // }, [boardSize]);
 
   useEffect(() => {
     setBoardBlockSize(calculateBlockSize(browserWindowSize, boardSize));

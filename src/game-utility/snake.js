@@ -27,6 +27,35 @@ const drawSnake = (gameBoard, snakesData) => {
   }
 };
 
+// const drawSnake2 = (gameBoard, snakesData) => {
+//   if (!gameBoard) return;
+
+//   // only remove class='snake' child nodes
+//   for (const node of gameBoard.childNodes) {
+//     if (node.classList.value === 'snake') {
+//       gameBoard.removeChild(node);
+//     }
+//   }
+
+//   for (const snake of snakesData) {
+//     const snakeBody = snake.body;
+//     for (let i = 0; i < snakeBody.length; i++) {
+//       const segment = snakeBody[i];
+//       const snakeElement = document.createElement('div');
+//       snakeElement.style.gridColumnStart = segment[0];
+//       snakeElement.style.gridRowStart = segment[1];
+
+//       snakeElement.classList.add('snake');
+//       if (i === snakeBody.length - 1) {
+//         snakeElement.style.backgroundColor = 'black';
+//       } else {
+//         snakeElement.style.backgroundColor = snake.color;
+//       }
+//       gameBoard.appendChild(snakeElement);
+//     }
+//   }
+// };
+
 const sendSnakeData = () => {};
 
 const getSnakeHead = (snakeData) => {

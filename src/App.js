@@ -26,7 +26,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    ws.current = new WebSocket('wss://snake-websocket-deploy.herokuapp.com/');
+    //ws.current = new WebSocket('wss://snake-websocket-deploy.herokuapp.com/');
+    ws.current = new WebSocket('ws://localhost:8080/');
     console.log('app.js:', ws.current);
 
     ws.current.onopen = () => {
