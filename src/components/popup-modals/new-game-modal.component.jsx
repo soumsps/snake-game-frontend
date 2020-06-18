@@ -5,19 +5,16 @@ import { API_URL } from '../../game-utility/constant';
 
 const NewGameModal = (props) => {
   const gameID = useRef(null);
-  const playerID = useRef(null);
-  const ws = useRef(null);
 
   useEffect(() => {
-    ws.current = new WebSocket(API_URL);
-    console.log(ws.current);
+    console.log('new game modal: ', props.ws.current);
 
-    ws.current.onmessage = (message) => {
+    props.ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
       if (res.method === 'CONNECT') {
-        playerID.current = res.playerID;
-        console.log(playerID.current);
-        window.sessionStorage.setItem('playerID', playerID.current);
+        props.playerID.current = res.props.playerID;
+        console.log(props.playerID.current);
+        window.sessionStorage.setItem('props.playerID', props.playerID.current);
       }
       if (res.method === 'CREATED') {
         console.log(`game id is`, res.game.id);
@@ -27,19 +24,18 @@ const NewGameModal = (props) => {
     };
   }, []);
 
-  const [playerName, setPlayerName] = useState('');
-
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();
     const payLoad = {
       method: 'CREATE',
-      playerID: playerID.current,
-      playerName: playerName,
+      playerID: props.playerID.current,
+      playerName: props.playerName.current,
     };
-    ws.current.send(JSON.stringify(payLoad));
+    props.ws.current.send(JSON.stringify(payLoad));
 
     console.log('newGame form submit');
   };
+
   return (
     <Modal closeModalCallback={props.closeModalCallback}>
       <Modal.Header closeButton>
@@ -56,7 +52,7 @@ const NewGameModal = (props) => {
               required
               data-first-focusable="true"
               onChange={(event) => {
-                setPlayerName(event.target.value);
+                props.playerName.current = event.target.value;
               }}
             />
           </div>

@@ -53,42 +53,18 @@ const MultiplayerPage = (props) => {
 
   console.log('gameId: ', props.gameId);
   const gameID = useRef(props.gameId);
-  const playerID = useRef(window.sessionStorage.getItem('playerID'));
-  const ws = useRef(null);
-  const timerID = useRef(0);
-
-  const keepAlive = () => {
-    const timeout = 20000;
-    if (ws.current.readyState === ws.current.OPEN) {
-      ws.current.send(JSON.stringify({ method: 'check' }));
-    }
-    timerID.current = setTimeout(keepAlive, timeout);
-  };
-  const cancelKeepAlive = () => {
-    if (timerID.current) {
-      clearTimeout(timerID.current);
-    }
-  };
 
   useEffect(() => {
-    ws.current = new WebSocket(API_URL);
-    console.log(ws.current);
+    if (!props.ws.current) return;
 
-    ws.current.onopen = () => {
-      keepAlive();
-    };
+    console.log(props.ws.current);
 
-    ws.current.onclose = () => {
-      cancelKeepAlive();
-    };
-
-    ws.current.onmessage = (message) => {
+    props.ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
       console.log('response: ', res);
-      if (res.method === 'CONNECT' && !playerID.current) {
-        playerID.current = res.playerID;
-        console.log(playerID.current);
-        window.sessionStorage.setItem('playerID', playerID.current);
+      if (res.method === 'CONNECT' && !props.playerID.current) {
+        props.playerID.current = res.playerID;
+        console.log(props.playerID.current);
       }
 
       if (res.method === 'JOINED') {
@@ -96,15 +72,17 @@ const MultiplayerPage = (props) => {
       }
     };
 
-    const payLoad = {
-      method: 'JOIN',
-      playerID: playerID.current,
-      gameID: gameID.current,
-    };
-    ws.current.send(JSON.stringify(payLoad));
+    if (props.playerName.current) {
+      const payLoad = {
+        method: 'JOIN',
+        playerID: props.playerID.current,
+        gameID: gameID.current,
+        playerName: props.playerName.current,
+      };
+      props.ws.current.send(JSON.stringify(payLoad));
+    }
   }, []);
 
-  console.log(playerID);
   const updateData = useCallback(() => {
     if (isSnakeDead(snakeRef, boardSize)) {
       setGameStatus('finished');
@@ -178,7 +156,7 @@ const MultiplayerPage = (props) => {
         </div>
       </header>
 
-      {!playerID.current ? (
+      {!props.playerName.current ? (
         <div className="join-game-alert">
           <div className="join-alert-text">
             <h4 style={{ margin: '0', fontWeight: '400' }}>
@@ -221,11 +199,15 @@ const MultiplayerPage = (props) => {
         <JoinGameModal
           closeModalCallback={setIsJoinGameModalOpen}
           gameId={props.gameId}
+          ws={props.ws}
+          playerID={props.playerID}
+          playerName={props.playerName}
         />
       )}
       {isLeaveMultiplayerModalOpen && (
         <LeaveMultiplayerModal
           closeModalCallback={setIsLeaveMultiplayerModalOpen}
+          ws={props.ws}
         />
       )}
     </div>

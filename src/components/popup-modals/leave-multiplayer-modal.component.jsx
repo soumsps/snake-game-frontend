@@ -4,6 +4,7 @@ import { navigate } from '@reach/router';
 
 const LeaveMultiplayerModal = (props) => {
   const handleLeaveMultiplayerMode = (event) => {
+    // props.ws.close(1000, 'Leaving');
     navigate('/');
     console.log('leave multiplayer mode confirmed');
   };
