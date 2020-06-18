@@ -1,17 +1,43 @@
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import Modal from '../modal/modal.component';
 import { navigate } from '@reach/router';
 import { API_URL } from '../../game-utility/constant';
 
 const NewGameModal = (props) => {
-  let wss = new WebSocket(API_URL);
-  console.log(wss);
+  const gameID = useRef(null);
+  const playerID = useRef(null);
+  const ws = useRef(null);
+
+  useEffect(() => {
+    ws.current = new WebSocket(API_URL);
+    console.log(ws.current);
+
+    ws.current.onmessage = (message) => {
+      const res = JSON.parse(message.data);
+      if (res.method === 'CONNECT') {
+        playerID.current = res.playerID;
+        console.log(playerID.current);
+        window.localStorage.setItem('playerID', playerID.current);
+      }
+      if (res.method === 'CREATED') {
+        console.log(`game id is`, res.game.id);
+        gameID.current = res.game.id;
+        navigate(`multiplayer/${gameID.current}`);
+      }
+    };
+  }, []);
 
   const [playerName, setPlayerName] = useState('');
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();
-    navigate('multiplayer/asaddsf');
+    const payLoad = {
+      method: 'CREATE',
+      playerID: playerID.current,
+      playerName: playerName,
+    };
+    ws.current.send(JSON.stringify(payLoad));
+
     console.log('newGame form submit');
   };
   return (

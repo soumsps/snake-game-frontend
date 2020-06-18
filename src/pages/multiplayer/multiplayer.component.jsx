@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, memo } from 'react';
 import GameController from '../../components/game-controller/game-controller.component';
 import GameBoard from '../../components/game-board/game-board.component';
 import LeaveMultiplayerModal from '../../components/popup-modals/leave-multiplayer-modal.component';
@@ -28,6 +28,7 @@ import {
   DEFAULT_IS_SINGLE_PLAYER_MODE,
   DEFAULT_GAME_STATUS,
   DEFAULT_SNAKE_DATA,
+  API_URL,
 } from '../../game-utility/constant';
 import './multiplayer.styles.css';
 
@@ -37,7 +38,7 @@ const MultiplayerPage = (props) => {
     isLeaveMultiplayerModalOpen,
     setIsLeaveMultiplayerModalOpen,
   ] = useState(false);
-  const [isJoinGameModalOpen, setIsJoinGameModalOpen] = useState(false);
+  const [isJoinGameModalOpen, setIsJoinGameModalOpen] = useState(true);
   const [boardSize] = useState({ ...DEFAULT_BOARD_SIZE });
   const [boardBlockSize, setBoardBlockSize] = useState(null);
 
@@ -185,7 +186,10 @@ const MultiplayerPage = (props) => {
       </div>
 
       {isJoinGameModalOpen && (
-        <JoinGameModal closeModalCallback={setIsJoinGameModalOpen} />
+        <JoinGameModal
+          closeModalCallback={setIsJoinGameModalOpen}
+          gameId={props.gameId}
+        />
       )}
       {isLeaveMultiplayerModalOpen && (
         <LeaveMultiplayerModal
@@ -196,4 +200,4 @@ const MultiplayerPage = (props) => {
   );
 };
 
-export default MultiplayerPage;
+export default memo(MultiplayerPage);
