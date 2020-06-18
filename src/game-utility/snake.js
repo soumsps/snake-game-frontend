@@ -72,16 +72,16 @@ const getNextSnakeHeadPosition = (snakeRef) => {
   let newSnakeHead = getSnakeHead(snakeRef.current.body);
   const snakeDirection = snakeRef.current.direction;
 
-  if (snakeDirection === 'left') {
+  if (snakeDirection === 'LEFT') {
     newSnakeHead[0] -= 1;
   }
-  if (snakeDirection === 'right') {
+  if (snakeDirection === 'RIGHT') {
     newSnakeHead[0] += 1;
   }
-  if (snakeDirection === 'up') {
+  if (snakeDirection === 'UP') {
     newSnakeHead[1] -= 1;
   }
-  if (snakeDirection === 'down') {
+  if (snakeDirection === 'DOWN') {
     newSnakeHead[1] += 1;
   }
 

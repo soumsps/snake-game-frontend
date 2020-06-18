@@ -8,6 +8,7 @@ function App() {
   const playerID = useRef(null);
   const playerName = useRef(null);
   const ws = useRef(null);
+  const isGameJoined = useRef(false);
   const timerID = useRef(0);
 
   const keepAlive = useCallback(() => {
@@ -53,12 +54,14 @@ function App() {
           ws={ws}
           playerID={playerID}
           playerName={playerName}
+          isGameJoined={isGameJoined}
         />
         <MultiplayerPage
           path="multiplayer/:gameId"
           ws={ws}
           playerID={playerID}
           playerName={playerName}
+          isGameJoined={isGameJoined}
         />
       </Router>
     </div>

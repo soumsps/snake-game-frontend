@@ -2,7 +2,13 @@ import React, { useEffect, useRef, memo } from 'react';
 import Modal from '../modal/modal.component';
 import { navigate } from '@reach/router';
 
-const NewGameModal = ({ ws, playerID, playerName, closeModalCallback }) => {
+const NewGameModal = ({
+  ws,
+  playerID,
+  playerName,
+  closeModalCallback,
+  isGameJoined,
+}) => {
   const gameID = useRef(null);
 
   useEffect(() => {
@@ -15,6 +21,7 @@ const NewGameModal = ({ ws, playerID, playerName, closeModalCallback }) => {
       if (res.method === 'JOINED') {
         console.log(res.food);
         // navigate to multiplayer game link
+        isGameJoined.current = true;
         navigate(`multiplayer/${gameID.current}`);
       }
 
@@ -32,7 +39,7 @@ const NewGameModal = ({ ws, playerID, playerName, closeModalCallback }) => {
         ws.current.send(JSON.stringify(payLoad));
       }
     };
-  }, [playerID, ws, playerName]);
+  }, [playerID, ws, playerName, isGameJoined]);
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();

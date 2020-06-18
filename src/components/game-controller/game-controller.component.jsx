@@ -26,31 +26,31 @@ const GameController = ({
   });
 
   const onLeftButtonPress = (snakeRef, gameStatus) => {
-    if (snakeRef.current.direction === 'right' || gameStatus !== 'playing') {
+    if (snakeRef.current.direction === 'RIGHT' || gameStatus !== 'playing') {
       return;
     }
-    snakeRef.current.direction = 'left';
+    snakeRef.current.direction = 'LEFT';
   };
 
   const onUpButtonPress = (snakeRef, gameStatus) => {
-    if (snakeRef.current.direction === 'down' || gameStatus !== 'playing') {
+    if (snakeRef.current.direction === 'DOWN' || gameStatus !== 'playing') {
       return;
     }
-    snakeRef.current.direction = 'up';
+    snakeRef.current.direction = 'UP';
   };
 
   const onDownButtonPress = (snakeRef, gameStatus) => {
-    if (snakeRef.current.direction === 'up' || gameStatus !== 'playing') {
+    if (snakeRef.current.direction === 'UP' || gameStatus !== 'playing') {
       return;
     }
-    snakeRef.current.direction = 'down';
+    snakeRef.current.direction = 'DOWN';
   };
 
   const onRightButtonPress = (snakeRef, gameStatus) => {
-    if (snakeRef.current.direction === 'left' || gameStatus !== 'playing') {
+    if (snakeRef.current.direction === 'LEFT' || gameStatus !== 'playing') {
       return;
     }
-    snakeRef.current.direction = 'right';
+    snakeRef.current.direction = 'RIGHT';
   };
 
   const onSpaceButtonPress = (gameStatus, setGameStatus) => {

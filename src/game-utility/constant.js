@@ -14,7 +14,7 @@ const DEFAULT_SNAKE_DATA = {
   ],
   color: 'red',
   speed: 160,
-  direction: 'down',
+  direction: 'DOWN',
 };
 
 const DEFAULT_IS_SINGLE_PLAYER_MODE = true;

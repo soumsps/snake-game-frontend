@@ -30,7 +30,13 @@ import {
 } from '../../game-utility/constant';
 import './multiplayer.styles.css';
 
-const MultiplayerPage = ({ gameId, ws, playerID, playerName }) => {
+const MultiplayerPage = ({
+  gameId,
+  ws,
+  playerID,
+  playerName,
+  isGameJoined,
+}) => {
   const browserWindowSize = useCallback(useWindowSize());
   const [
     isLeaveMultiplayerModalOpen,
@@ -50,10 +56,9 @@ const MultiplayerPage = ({ gameId, ws, playerID, playerName }) => {
   const lastSnakeMoveTimeRef = useRef(0);
 
   const gameID = useRef(gameId);
+  console.log('multiplayer update');
 
-  useEffect(() => {
-    if (!ws.current) return;
-
+  const fireOnMessage = useCallback(() => {
     ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
       console.log('response: ', res);
@@ -63,6 +68,11 @@ const MultiplayerPage = ({ gameId, ws, playerID, playerName }) => {
       }
     };
   }, [playerID, ws]);
+
+  useEffect(() => {
+    if (!ws.current) return;
+    fireOnMessage();
+  }, [ws, fireOnMessage]);
 
   const updateData = useCallback(() => {
     if (isSnakeDead(snakeRef, boardSize)) {
@@ -137,7 +147,7 @@ const MultiplayerPage = ({ gameId, ws, playerID, playerName }) => {
         </div>
       </header>
 
-      {!playerName.current ? (
+      {!isGameJoined.current ? (
         <div className="join-game-alert">
           <div className="join-alert-text">
             <h4 style={{ margin: '0', fontWeight: '400' }}>
@@ -183,6 +193,8 @@ const MultiplayerPage = ({ gameId, ws, playerID, playerName }) => {
           ws={ws}
           playerID={playerID}
           playerName={playerName}
+          isGameJoined={isGameJoined}
+          fireOnMessage={fireOnMessage}
         />
       )}
       {isLeaveMultiplayerModalOpen && (

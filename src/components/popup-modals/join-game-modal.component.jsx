@@ -7,21 +7,23 @@ const JoinGameModal = ({
   playerID,
   playerName,
   closeModalCallback,
+  isGameJoined,
+  fireOnMessage,
 }) => {
   useEffect(() => {
     ws.current.onmessage = (message) => {
       const res = JSON.parse(message.data);
-      console.log(res);
+      console.log('response: ', res);
       if (res.method === 'CONNECT' && !playerID.current) {
         playerID.current = res.playerID;
       }
-
       if (res.method === 'JOINED') {
+        isGameJoined.current = true;
+        fireOnMessage();
         closeModalCallback(false);
-        console.log(res.food);
       }
     };
-  }, [playerID, ws, closeModalCallback]);
+  }, [playerID, ws, closeModalCallback, isGameJoined, fireOnMessage]);
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();
