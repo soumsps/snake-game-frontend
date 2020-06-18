@@ -17,7 +17,7 @@ const NewGameModal = (props) => {
       if (res.method === 'CONNECT') {
         playerID.current = res.playerID;
         console.log(playerID.current);
-        window.localStorage.setItem('playerID', playerID.current);
+        window.sessionStorage.setItem('playerID', playerID.current);
       }
       if (res.method === 'CREATED') {
         console.log(`game id is`, res.game.id);

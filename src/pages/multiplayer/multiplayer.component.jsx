@@ -38,11 +38,11 @@ const MultiplayerPage = (props) => {
     isLeaveMultiplayerModalOpen,
     setIsLeaveMultiplayerModalOpen,
   ] = useState(false);
-  const [isJoinGameModalOpen, setIsJoinGameModalOpen] = useState(true);
+  const [isJoinGameModalOpen, setIsJoinGameModalOpen] = useState(false);
   const [boardSize] = useState({ ...DEFAULT_BOARD_SIZE });
   const [boardBlockSize, setBoardBlockSize] = useState(null);
 
-  const [isSinglePlayerMode] = useState(DEFAULT_IS_SINGLE_PLAYER_MODE);
+  const [isSinglePlayerMode] = useState(false);
   // possible modes: not-started, playing, paused, and finished
   const [gameStatus, setGameStatus] = useState(DEFAULT_GAME_STATUS);
 
@@ -52,7 +52,59 @@ const MultiplayerPage = (props) => {
   const lastSnakeMoveTimeRef = useRef(0);
 
   console.log('gameId: ', props.gameId);
+  const gameID = useRef(props.gameId);
+  const playerID = useRef(window.sessionStorage.getItem('playerID'));
+  const ws = useRef(null);
+  const timerID = useRef(0);
 
+  const keepAlive = () => {
+    const timeout = 20000;
+    if (ws.current.readyState === ws.current.OPEN) {
+      ws.current.send(JSON.stringify({ method: 'check' }));
+    }
+    timerID.current = setTimeout(keepAlive, timeout);
+  };
+  const cancelKeepAlive = () => {
+    if (timerID.current) {
+      clearTimeout(timerID.current);
+    }
+  };
+
+  useEffect(() => {
+    ws.current = new WebSocket(API_URL);
+    console.log(ws.current);
+
+    ws.current.onopen = () => {
+      keepAlive();
+    };
+
+    ws.current.onclose = () => {
+      cancelKeepAlive();
+    };
+
+    ws.current.onmessage = (message) => {
+      const res = JSON.parse(message.data);
+      console.log('response: ', res);
+      if (res.method === 'CONNECT' && !playerID.current) {
+        playerID.current = res.playerID;
+        console.log(playerID.current);
+        window.sessionStorage.setItem('playerID', playerID.current);
+      }
+
+      if (res.method === 'JOINED') {
+        console.log(res.food);
+      }
+    };
+
+    const payLoad = {
+      method: 'JOIN',
+      playerID: playerID.current,
+      gameID: gameID.current,
+    };
+    ws.current.send(JSON.stringify(payLoad));
+  }, []);
+
+  console.log(playerID);
   const updateData = useCallback(() => {
     if (isSnakeDead(snakeRef, boardSize)) {
       setGameStatus('finished');
@@ -72,34 +124,10 @@ const MultiplayerPage = (props) => {
     }
   }, [boardSize]);
 
-  const snake2 = {
-    playerID: 'single-player',
-    body: [
-      [24, 17],
-      [24, 16],
-      [24, 15],
-    ],
-    color: 'green',
-    speed: 160,
-    direction: 'down',
-  };
-
-  const snake3 = {
-    playerID: 'single-player',
-    body: [
-      [44, 22],
-      [44, 23],
-      [44, 24],
-    ],
-    color: 'red',
-    speed: 160,
-    direction: 'up',
-  };
-
   const drawData = useCallback(() => {
-    drawSnake(gameBoardRef.current, [snakeRef.current, snake2, snake3]);
+    drawSnake(gameBoardRef.current, [snakeRef.current]);
     drawFood(gameBoardRef.current, foodPositionRef.current);
-  }, [snake2, snake3]);
+  }, []);
 
   // runs every 16.67ms
   const update = useCallback(
@@ -150,22 +178,26 @@ const MultiplayerPage = (props) => {
         </div>
       </header>
 
-      <div className="join-game-alert">
-        <div className="join-alert-text">
-          <h4 style={{ margin: '0', fontWeight: '400' }}>
-            You haven't joined this game yet.
-          </h4>
-        </div>
+      {!playerID.current ? (
+        <div className="join-game-alert">
+          <div className="join-alert-text">
+            <h4 style={{ margin: '0', fontWeight: '400' }}>
+              You haven't joined this game yet.
+            </h4>
+          </div>
 
-        <CustomButton
-          btnClass={'btn-restart'}
-          onClickCallback={() => {
-            setIsJoinGameModalOpen(true);
-          }}
-        >
-          Join Now
-        </CustomButton>
-      </div>
+          <CustomButton
+            btnClass={'btn-restart'}
+            onClickCallback={() => {
+              setIsJoinGameModalOpen(true);
+            }}
+          >
+            Join Now
+          </CustomButton>
+        </div>
+      ) : (
+        ''
+      )}
 
       <GameBoard
         boardSize={boardSize}

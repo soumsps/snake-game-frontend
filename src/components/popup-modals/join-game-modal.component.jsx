@@ -4,7 +4,7 @@ import Modal from '../modal/modal.component';
 
 const JoinGameModal = (props) => {
   const gameID = useRef(props.gameId);
-  const playerID = useRef(window.localStorage.getItem('playerID'));
+  const playerID = useRef(window.sessionStorage.getItem('playerID'));
   const ws = useRef(null);
   const timerID = useRef(0);
 
