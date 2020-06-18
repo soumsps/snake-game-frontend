@@ -1,5 +1,4 @@
-import React, { useState, memo, useRef, useEffect } from 'react';
-import { API_URL } from '../../game-utility/constant';
+import React, { memo, useRef, useEffect } from 'react';
 import Modal from '../modal/modal.component';
 
 const JoinGameModal = (props) => {
@@ -14,10 +13,11 @@ const JoinGameModal = (props) => {
       }
 
       if (res.method === 'JOINED') {
+        props.closeModalCallback(false);
         console.log(res.food);
       }
     };
-  }, []);
+  }, [props.playerID, props.ws]);
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();

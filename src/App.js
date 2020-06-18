@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import HomePage from './pages/homepage/homepage.component';
 import MultiplayerPage from './pages/multiplayer/multiplayer.component';
 import { Router } from '@reach/router';
@@ -10,18 +10,19 @@ function App() {
   const ws = useRef(null);
   const timerID = useRef(0);
 
-  const keepAlive = () => {
+  const keepAlive = useCallback(() => {
     const timeout = 20000;
     if (ws.current.readyState === ws.current.OPEN) {
       ws.current.send(JSON.stringify({ method: 'check' }));
     }
     timerID.current = setTimeout(keepAlive, timeout);
-  };
-  const cancelKeepAlive = () => {
+  }, []);
+
+  const cancelKeepAlive = useCallback(() => {
     if (timerID.current) {
       clearTimeout(timerID.current);
     }
-  };
+  }, []);
 
   useEffect(() => {
     ws.current = new WebSocket('wss://snake-websocket-deploy.herokuapp.com/');
@@ -43,7 +44,7 @@ function App() {
         console.log(playerID.current);
       }
     };
-  }, []);
+  }, [keepAlive, cancelKeepAlive]);
 
   return (
     <div className="App">

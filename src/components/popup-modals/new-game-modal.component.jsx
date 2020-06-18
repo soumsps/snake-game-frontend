@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import Modal from '../modal/modal.component';
 import { navigate } from '@reach/router';
-import { API_URL } from '../../game-utility/constant';
 
 const NewGameModal = (props) => {
   const gameID = useRef(null);
@@ -13,8 +12,6 @@ const NewGameModal = (props) => {
       const res = JSON.parse(message.data);
       if (res.method === 'CONNECT') {
         props.playerID.current = res.props.playerID;
-        console.log(props.playerID.current);
-        window.sessionStorage.setItem('props.playerID', props.playerID.current);
       }
       if (res.method === 'CREATED') {
         console.log(`game id is`, res.game.id);
@@ -22,7 +19,7 @@ const NewGameModal = (props) => {
         navigate(`multiplayer/${gameID.current}`);
       }
     };
-  }, []);
+  }, [props.playerID, props.ws]);
 
   const handleNewGameFormSubmit = (event) => {
     event.preventDefault();

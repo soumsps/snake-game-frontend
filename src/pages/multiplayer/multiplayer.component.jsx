@@ -25,10 +25,8 @@ import {
 } from '../../game-utility/food';
 import {
   DEFAULT_BOARD_SIZE,
-  DEFAULT_IS_SINGLE_PLAYER_MODE,
   DEFAULT_GAME_STATUS,
   DEFAULT_SNAKE_DATA,
-  API_URL,
 } from '../../game-utility/constant';
 import './multiplayer.styles.css';
 
@@ -42,7 +40,7 @@ const MultiplayerPage = (props) => {
   const [boardSize] = useState({ ...DEFAULT_BOARD_SIZE });
   const [boardBlockSize, setBoardBlockSize] = useState(null);
 
-  const [isSinglePlayerMode] = useState(false);
+  //const [isSinglePlayerMode] = useState(false);
   // possible modes: not-started, playing, paused, and finished
   const [gameStatus, setGameStatus] = useState(DEFAULT_GAME_STATUS);
 
@@ -81,7 +79,7 @@ const MultiplayerPage = (props) => {
       };
       props.ws.current.send(JSON.stringify(payLoad));
     }
-  }, []);
+  }, [props.playerID, props.ws, props.playerName]);
 
   const updateData = useCallback(() => {
     if (isSnakeDead(snakeRef, boardSize)) {

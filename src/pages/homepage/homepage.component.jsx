@@ -24,7 +24,6 @@ import {
 } from '../../game-utility/food';
 import {
   DEFAULT_BOARD_SIZE,
-  DEFAULT_IS_SINGLE_PLAYER_MODE,
   DEFAULT_GAME_STATUS,
   DEFAULT_SNAKE_DATA,
 } from '../../game-utility/constant';
@@ -37,7 +36,7 @@ const HomePage = (props) => {
   const [boardBlockSize, setBoardBlockSize] = useState(null);
   const [scoreBoard, setScoreBoard] = useState({ score: 0, highScore: 0 });
 
-  const [isSinglePlayerMode] = useState(DEFAULT_IS_SINGLE_PLAYER_MODE);
+  // const [isSinglePlayerMode] = useState(true);
   // possible modes: not-started, playing, paused, and finished
   const [gameStatus, setGameStatus] = useState(DEFAULT_GAME_STATUS);
 
