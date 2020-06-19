@@ -31,7 +31,10 @@ const GameController = ({
   console.log(snakeRef.current);
 
   const onLeftButtonPress = () => {
-    if (snakeRef.current.direction === 'RIGHT' || gameStatus !== 'playing') {
+    if (
+      (snakeRef.current && snakeRef.current.direction === 'RIGHT') ||
+      gameStatus !== 'playing'
+    ) {
       return;
     }
     snakeRef.current.direction = 'LEFT';
@@ -41,7 +44,10 @@ const GameController = ({
   };
 
   const onUpButtonPress = () => {
-    if (snakeRef.current.direction === 'DOWN' || gameStatus !== 'playing') {
+    if (
+      (snakeRef.current && snakeRef.current.direction === 'DOWN') ||
+      gameStatus !== 'playing'
+    ) {
       return;
     }
     snakeRef.current.direction = 'UP';
@@ -51,7 +57,10 @@ const GameController = ({
   };
 
   const onDownButtonPress = () => {
-    if (snakeRef.current.direction === 'UP' || gameStatus !== 'playing') {
+    if (
+      (snakeRef.current && snakeRef.current.direction === 'UP') ||
+      gameStatus !== 'playing'
+    ) {
       return;
     }
     snakeRef.current.direction = 'DOWN';
@@ -61,7 +70,10 @@ const GameController = ({
   };
 
   const onRightButtonPress = () => {
-    if (snakeRef.current.direction === 'LEFT' || gameStatus !== 'playing') {
+    if (
+      (snakeRef.current && snakeRef.current.direction === 'LEFT') ||
+      gameStatus !== 'playing'
+    ) {
       return;
     }
     snakeRef.current.direction = 'RIGHT';
