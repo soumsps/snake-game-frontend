@@ -45,3 +45,21 @@
   display: flex;
   align-items: center;
 }
+
+.game-room-details {
+  background-color: #f8f8f8;
+  border: 1px solid #aaa7a7;
+  position: absolute;
+  width: 300px;
+  margin: 5px;
+  bottom: 0;
+  right: 0;
+}
+
+.game-room-title {
+  background-color: #d2d2d9;
+}
+
+.game-room-user-list {
+  list-style-type: none;
+}

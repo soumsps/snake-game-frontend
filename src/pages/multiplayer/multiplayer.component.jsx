@@ -9,7 +9,7 @@ import { useWindowSize } from '../../custom-hooks/use-window-size.hook';
 import { useGameLoop } from '../../custom-hooks/use-game-loop.hook';
 import { calculateBlockSize } from '../../game-utility/game-board';
 import { drawSnake2 } from '../../game-utility/snake';
-import { drawFood } from '../../game-utility/food';
+import { drawFood, removeOldFood } from '../../game-utility/food';
 import {
   DEFAULT_BOARD_SIZE,
   DEFAULT_GAME_STATUS,
@@ -71,6 +71,10 @@ const MultiplayerPage = ({
         }
         if (res.game.isGameStarted && gameStatus !== 'playing') {
           setGameStatus('playing');
+        }
+
+        if (res.game.isFoodEaten) {
+          removeOldFood(gameBoardRef.current);
         }
       }
     };
@@ -182,6 +186,15 @@ const MultiplayerPage = ({
         handleMultiplayerGameStart={handleMultiplayerGameStart}
         handleDirectionChangeEvent={handleDirectionChangeEvent}
       />
+
+      <div className="game-room-details">
+        <div className="game-room-title">Game Room</div>
+        <ul id="game-user-list" className="game-room-user-list">
+          <li>Soumendu joined</li>
+          <li>Ajay joined</li>
+        </ul>
+      </div>
+
       <div className="instruction-text">
         Use <b>Enter</b> key to Start / Restart
         <br />

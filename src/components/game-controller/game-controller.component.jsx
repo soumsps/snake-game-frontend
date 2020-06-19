@@ -28,7 +28,6 @@ const GameController = ({
   useEffect(() => {
     document.onkeydown = handleKeyDown;
   });
-  console.log(snakeRef.current);
 
   const onLeftButtonPress = () => {
     if (
