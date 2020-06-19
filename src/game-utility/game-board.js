@@ -14,4 +14,19 @@ const randomGridPosition = (boardSize) => {
   ];
 };
 
-export { calculateBlockSize, randomGridPosition };
+const drawGameRoom = (snakesData) => {
+  const gameRoom = document.getElementById('game-user-list');
+
+  gameRoom.innerHTML = '';
+
+  for (const snake of snakesData) {
+    const listElement = document.createElement('li');
+    listElement.innerHTML =
+      snake.playerName + ' <span style="color:black;">joined</span>';
+    listElement.style.color = snake.color;
+
+    gameRoom.appendChild(listElement);
+  }
+};
+
+export { calculateBlockSize, randomGridPosition, drawGameRoom };

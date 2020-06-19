@@ -50,7 +50,10 @@ const drawSnake2 = (gameBoard, snakesData) => {
       snakeElement.style.gridRowStart = segment[1];
 
       snakeElement.classList.add('snake');
-      if (i === 0 && (direction === 'RIGHT' || direction === 'DOWN')) {
+      if (
+        i === snakeBody.length - 1 &&
+        (direction === 'RIGHT' || direction === 'DOWN')
+      ) {
         snakeElement.style.backgroundColor = 'black';
       } else if (
         i === snakeBody.length - 1 &&

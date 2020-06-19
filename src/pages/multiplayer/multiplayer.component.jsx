@@ -7,7 +7,10 @@ import JoinGameModal from '../../components/popup-modals/join-game-modal.compone
 import CustomButton from '../../components/custom-button/custom-button.component';
 import { useWindowSize } from '../../custom-hooks/use-window-size.hook';
 import { useGameLoop } from '../../custom-hooks/use-game-loop.hook';
-import { calculateBlockSize } from '../../game-utility/game-board';
+import {
+  calculateBlockSize,
+  drawGameRoom,
+} from '../../game-utility/game-board';
 import { drawSnake2 } from '../../game-utility/snake';
 import { drawFood, removeOldFood } from '../../game-utility/food';
 import {
@@ -76,6 +79,8 @@ const MultiplayerPage = ({
         if (res.game.isFoodEaten) {
           removeOldFood(gameBoardRef.current);
         }
+
+        drawGameRoom(snakesData.current);
       }
     };
   }, [playerID, ws, gameStatus]);
@@ -111,6 +116,7 @@ const MultiplayerPage = ({
   // runs every 16.67ms
   const update = useCallback((currentTime) => {
     drawSnake2(gameBoardRef.current, snakesData.current);
+
     if (foodPositionRef.current) {
       drawFood(gameBoardRef.current, foodPositionRef.current);
     }
@@ -189,10 +195,7 @@ const MultiplayerPage = ({
 
       <div className="game-room-details">
         <div className="game-room-title">Game Room</div>
-        <ul id="game-user-list" className="game-room-user-list">
-          <li>Soumendu joined</li>
-          <li>Ajay joined</li>
-        </ul>
+        <ul id="game-user-list" className="game-room-user-list"></ul>
       </div>
 
       <div className="instruction-text">
