@@ -8,7 +8,7 @@ import CustomButton from '../../components/custom-button/custom-button.component
 import { useWindowSize } from '../../custom-hooks/use-window-size.hook';
 import { useGameLoop } from '../../custom-hooks/use-game-loop.hook';
 import { calculateBlockSize } from '../../game-utility/game-board';
-import { drawSnake } from '../../game-utility/snake';
+import { drawSnake2 } from '../../game-utility/snake';
 import { drawFood } from '../../game-utility/food';
 import {
   DEFAULT_BOARD_SIZE,
@@ -33,13 +33,14 @@ const MultiplayerPage = ({
   const [boardSize] = useState({ ...DEFAULT_BOARD_SIZE });
   const [boardBlockSize, setBoardBlockSize] = useState(null);
 
-  //const [isSinglePlayerMode] = useState(false);
+  const [isSinglePlayerMode] = useState(false);
   // possible modes: not-started, playing, paused, and finished
   const [gameStatus, setGameStatus] = useState(DEFAULT_GAME_STATUS);
+  const [canStartGame, setCanStartGame] = useState(false);
 
   const snakeRef = useRef(null);
   const snakesData = useRef([]);
-  const foodPositionRef = useRef([1, 1]);
+  const foodPositionRef = useRef(null);
   const gameBoardRef = useRef(null);
 
   const gameID = useRef(gameId);
@@ -54,12 +55,49 @@ const MultiplayerPage = ({
       }
 
       if (res.method === 'UPDATE') {
-        console.log(res.game);
+        console.log(res);
         snakesData.current = res.game.players;
         foodPositionRef.current = res.food;
+
+        // eslint-disable-next-line array-callback-return
+        res.game.players.map((snake) => {
+          if (snake.playerID === playerID.current) {
+            snakeRef.current = snake;
+          }
+        });
+
+        if (res.game.players.length > 1 && gameStatus === 'not-started') {
+          setCanStartGame(true);
+        }
+        if (res.game.isGameStarted && gameStatus !== 'playing') {
+          setGameStatus('playing');
+        }
       }
     };
-  }, [playerID, ws]);
+  }, [playerID, ws, gameStatus]);
+
+  const handleMultiplayerGameStart = useCallback(() => {
+    const payLoad = {
+      method: 'STARTGAME',
+      gameID: gameID.current,
+    };
+    ws.current.send(JSON.stringify(payLoad));
+    console.log('gamStart Triggered');
+  }, [ws]);
+
+  const handleDirectionChangeEvent = useCallback(
+    (newDirection) => {
+      const payLoad = {
+        method: 'DIRECTIONCHANGE',
+        gameID: gameID.current,
+        playerID: playerID.current,
+        direction: newDirection,
+      };
+      ws.current.send(JSON.stringify(payLoad));
+      console.log('direction change Triggered', newDirection);
+    },
+    [playerID, ws]
+  );
 
   useEffect(() => {
     if (!ws.current) return;
@@ -68,7 +106,7 @@ const MultiplayerPage = ({
 
   // runs every 16.67ms
   const update = useCallback((currentTime) => {
-    drawSnake(gameBoardRef.current, snakesData.current);
+    drawSnake2(gameBoardRef.current, snakesData.current);
     drawFood(gameBoardRef.current, foodPositionRef.current);
   }, []);
 
@@ -76,9 +114,9 @@ const MultiplayerPage = ({
     snakeRef.current = { ...DEFAULT_SNAKE_DATA };
   };
 
-  // useEffect(() => {
-  //   foodPositionRef.current = getRandomFoodPosition(boardSize);
-  // }, [boardSize]);
+  useEffect(() => {
+    foodPositionRef.current = [4, 4];
+  }, []);
 
   useEffect(() => {
     setBoardBlockSize(calculateBlockSize(browserWindowSize, boardSize));
@@ -137,6 +175,10 @@ const MultiplayerPage = ({
         setGameStatus={setGameStatus}
         gameStatus={gameStatus}
         onRestartButtonPress={onRestartButtonPress}
+        isSinglePlayerMode={isSinglePlayerMode}
+        canStartGame={canStartGame}
+        handleMultiplayerGameStart={handleMultiplayerGameStart}
+        handleDirectionChangeEvent={handleDirectionChangeEvent}
       />
       <div className="instruction-text">
         Use <b>Enter</b> key to Start / Restart

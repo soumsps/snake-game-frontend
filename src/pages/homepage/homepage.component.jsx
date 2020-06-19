@@ -36,7 +36,9 @@ const HomePage = ({ ws, playerID, playerName, isGameJoined }) => {
   const [boardBlockSize, setBoardBlockSize] = useState(null);
   const [scoreBoard, setScoreBoard] = useState({ score: 0, highScore: 0 });
 
-  // const [isSinglePlayerMode] = useState(true);
+  const [isSinglePlayerMode] = useState(true);
+  const [canStartGame] = useState(true);
+
   // possible modes: not-started, playing, paused, and finished
   const [gameStatus, setGameStatus] = useState(DEFAULT_GAME_STATUS);
 
@@ -144,6 +146,8 @@ const HomePage = ({ ws, playerID, playerName, isGameJoined }) => {
         setGameStatus={setGameStatus}
         gameStatus={gameStatus}
         onRestartButtonPress={onRestartButtonPress}
+        isSinglePlayerMode={isSinglePlayerMode}
+        canStartGame={canStartGame}
       />
       <div className="instruction-text">
         Use <b>Enter</b> key to Start / Restart

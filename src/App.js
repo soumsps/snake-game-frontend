@@ -13,6 +13,7 @@ function App() {
 
   const keepAlive = useCallback(() => {
     const timeout = 20000;
+    console.log('ws keep allive');
     if (ws.current.readyState === ws.current.OPEN) {
       ws.current.send(JSON.stringify({ method: 'check' }));
     }
@@ -26,8 +27,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    //ws.current = new WebSocket('wss://snake-websocket-deploy.herokuapp.com/');
-    ws.current = new WebSocket('ws://localhost:8080/');
+    ws.current = new WebSocket('wss://snake-websocket-deploy.herokuapp.com/');
+    //ws.current = new WebSocket('ws://localhost:8080/');
     console.log('app.js:', ws.current);
 
     ws.current.onopen = () => {

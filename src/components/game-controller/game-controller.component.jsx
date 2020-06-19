@@ -7,6 +7,10 @@ const GameController = ({
   gameStatus,
   setGameStatus,
   onRestartButtonPress,
+  isSinglePlayerMode,
+  canStartGame,
+  handleMultiplayerGameStart,
+  handleDirectionChangeEvent,
 }) => {
   const KeyCodes = {
     LEFT: 37,
@@ -24,36 +28,49 @@ const GameController = ({
   useEffect(() => {
     document.onkeydown = handleKeyDown;
   });
+  console.log(snakeRef.current);
 
-  const onLeftButtonPress = (snakeRef, gameStatus) => {
+  const onLeftButtonPress = () => {
     if (snakeRef.current.direction === 'RIGHT' || gameStatus !== 'playing') {
       return;
     }
     snakeRef.current.direction = 'LEFT';
+    if (!isSinglePlayerMode) {
+      handleDirectionChangeEvent('LEFT');
+    }
   };
 
-  const onUpButtonPress = (snakeRef, gameStatus) => {
+  const onUpButtonPress = () => {
     if (snakeRef.current.direction === 'DOWN' || gameStatus !== 'playing') {
       return;
     }
     snakeRef.current.direction = 'UP';
+    if (!isSinglePlayerMode) {
+      handleDirectionChangeEvent('UP');
+    }
   };
 
-  const onDownButtonPress = (snakeRef, gameStatus) => {
+  const onDownButtonPress = () => {
     if (snakeRef.current.direction === 'UP' || gameStatus !== 'playing') {
       return;
     }
     snakeRef.current.direction = 'DOWN';
+    if (!isSinglePlayerMode) {
+      handleDirectionChangeEvent('DOWN');
+    }
   };
 
-  const onRightButtonPress = (snakeRef, gameStatus) => {
+  const onRightButtonPress = () => {
     if (snakeRef.current.direction === 'LEFT' || gameStatus !== 'playing') {
       return;
     }
     snakeRef.current.direction = 'RIGHT';
+    if (!isSinglePlayerMode) {
+      handleDirectionChangeEvent('RIGHT');
+    }
   };
 
-  const onSpaceButtonPress = (gameStatus, setGameStatus) => {
+  const onSpaceButtonPress = () => {
     if (gameStatus === 'playing') {
       setGameStatus('paused');
     } else if (gameStatus === 'paused') {
@@ -61,8 +78,15 @@ const GameController = ({
     }
   };
 
-  const onEnterButtonPress = (gameStatus, setGameStatus, snakeRef) => {
+  const multiplayerGameStart = () => {
+    if (!isSinglePlayerMode) {
+      handleMultiplayerGameStart();
+    }
+  };
+
+  const onEnterButtonPress = () => {
     if (gameStatus === 'not-started') {
+      multiplayerGameStart();
       setGameStatus('playing');
     } else if (gameStatus === 'finished') {
       onRestartButtonPress(snakeRef);
@@ -73,34 +97,34 @@ const GameController = ({
   const handleKeyDown = (event) => {
     switch (event.keyCode) {
       case KeyCodes.LEFT:
-        onLeftButtonPress(snakeRef, gameStatus);
+        onLeftButtonPress();
         break;
       case KeyCodes.A:
-        onLeftButtonPress(snakeRef, gameStatus);
+        onLeftButtonPress();
         break;
       case KeyCodes.UP:
-        onUpButtonPress(snakeRef, gameStatus);
+        onUpButtonPress();
         break;
       case KeyCodes.W:
-        onUpButtonPress(snakeRef, gameStatus);
+        onUpButtonPress();
         break;
       case KeyCodes.RIGHT:
-        onRightButtonPress(snakeRef, gameStatus);
+        onRightButtonPress();
         break;
       case KeyCodes.D:
-        onRightButtonPress(snakeRef, gameStatus);
+        onRightButtonPress();
         break;
       case KeyCodes.DOWN:
-        onDownButtonPress(snakeRef, gameStatus);
+        onDownButtonPress();
         break;
       case KeyCodes.S:
-        onDownButtonPress(snakeRef, gameStatus);
+        onDownButtonPress();
         break;
       case KeyCodes.SPACE:
-        onSpaceButtonPress(gameStatus, setGameStatus);
+        onSpaceButtonPress();
         break;
       case KeyCodes.ENTER:
-        onEnterButtonPress(gameStatus, setGameStatus, snakeRef);
+        onEnterButtonPress();
         break;
       default:
     }
@@ -108,10 +132,11 @@ const GameController = ({
 
   return (
     <>
-      {gameStatus === 'not-started' ? (
+      {gameStatus === 'not-started' && canStartGame ? (
         <CustomButton
           btnClass={'btn-start'}
           onClickCallback={() => {
+            multiplayerGameStart();
             setGameStatus('playing');
           }}
         >
@@ -121,7 +146,7 @@ const GameController = ({
         ''
       )}
 
-      {gameStatus === 'playing' ? (
+      {gameStatus === 'playing' && isSinglePlayerMode ? (
         <CustomButton
           btnClass={'btn-pause'}
           onClickCallback={() => {
@@ -134,7 +159,7 @@ const GameController = ({
         ''
       )}
 
-      {gameStatus === 'paused' ? (
+      {gameStatus === 'paused' && isSinglePlayerMode ? (
         <CustomButton
           btnClass={'btn-resume'}
           onClickCallback={() => {
@@ -160,32 +185,37 @@ const GameController = ({
       ) : (
         ''
       )}
-      <div className="mobile-controls">
-        <CustomButton
-          btnClass={'btn-game-control'}
-          onClickCallback={onLeftButtonPress}
-        >
-          <i className="fas fa-arrow-left"></i>
-        </CustomButton>
-        <CustomButton
-          btnClass={'btn-game-control'}
-          onClickCallback={onUpButtonPress}
-        >
-          <i className="fas fa-arrow-up"></i>
-        </CustomButton>
-        <CustomButton
-          btnClass={'btn-game-control'}
-          onClickCallback={onDownButtonPress}
-        >
-          <i className="fas fa-arrow-down"></i>
-        </CustomButton>
-        <CustomButton
-          btnClass={'btn-game-control'}
-          onClickCallback={onRightButtonPress}
-        >
-          <i className="fas fa-arrow-right"></i>
-        </CustomButton>
-      </div>
+
+      {snakeRef.current ? (
+        <div className="mobile-controls">
+          <CustomButton
+            btnClass={'btn-game-control'}
+            onClickCallback={onLeftButtonPress}
+          >
+            <i className="fas fa-arrow-left"></i>
+          </CustomButton>
+          <CustomButton
+            btnClass={'btn-game-control'}
+            onClickCallback={onUpButtonPress}
+          >
+            <i className="fas fa-arrow-up"></i>
+          </CustomButton>
+          <CustomButton
+            btnClass={'btn-game-control'}
+            onClickCallback={onDownButtonPress}
+          >
+            <i className="fas fa-arrow-down"></i>
+          </CustomButton>
+          <CustomButton
+            btnClass={'btn-game-control'}
+            onClickCallback={onRightButtonPress}
+          >
+            <i className="fas fa-arrow-right"></i>
+          </CustomButton>
+        </div>
+      ) : (
+        ''
+      )}
     </>
   );
 };

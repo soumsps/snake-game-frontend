@@ -27,34 +27,43 @@ const drawSnake = (gameBoard, snakesData) => {
   }
 };
 
-// const drawSnake2 = (gameBoard, snakesData) => {
-//   if (!gameBoard) return;
+const drawSnake2 = (gameBoard, snakesData) => {
+  if (!gameBoard) return;
 
-//   // only remove class='snake' child nodes
-//   for (const node of gameBoard.childNodes) {
-//     if (node.classList.value === 'snake') {
-//       gameBoard.removeChild(node);
-//     }
-//   }
+  // only remove class='snake' child nodes
+  for (const node of gameBoard.childNodes) {
+    if (node.classList.value === 'snake') {
+      gameBoard.removeChild(node);
+    }
+  }
 
-//   for (const snake of snakesData) {
-//     const snakeBody = snake.body;
-//     for (let i = 0; i < snakeBody.length; i++) {
-//       const segment = snakeBody[i];
-//       const snakeElement = document.createElement('div');
-//       snakeElement.style.gridColumnStart = segment[0];
-//       snakeElement.style.gridRowStart = segment[1];
+  for (const snake of snakesData) {
+    let snakeBody = snake.body;
+    const direction = snake.direction;
+    // if (direction === 'LEFT' || direction === 'UP') {
+    //   snakeBody.reverse();
+    // }
+    for (let i = 0; i < snakeBody.length; i++) {
+      const segment = snakeBody[i];
+      const snakeElement = document.createElement('div');
+      snakeElement.style.gridColumnStart = segment[0];
+      snakeElement.style.gridRowStart = segment[1];
 
-//       snakeElement.classList.add('snake');
-//       if (i === snakeBody.length - 1) {
-//         snakeElement.style.backgroundColor = 'black';
-//       } else {
-//         snakeElement.style.backgroundColor = snake.color;
-//       }
-//       gameBoard.appendChild(snakeElement);
-//     }
-//   }
-// };
+      snakeElement.classList.add('snake');
+      if (i === 0 && (direction === 'RIGHT' || direction === 'DOWN')) {
+        snakeElement.style.backgroundColor = 'black';
+      } else if (
+        i === snakeBody.length - 1 &&
+        (direction === 'LEFT' || direction === 'UP')
+      ) {
+        snakeElement.style.backgroundColor = 'black';
+      } else {
+        snakeElement.style.backgroundColor = snake.color;
+      }
+      gameBoard.appendChild(snakeElement);
+    }
+  }
+};
 
 const sendSnakeData = () => {};
 
@@ -135,6 +144,7 @@ const updateSnakeSpeed = (snakeRef) => {
 
 export {
   drawSnake,
+  drawSnake2,
   sendSnakeData,
   getSnakeHead,
   growSnake,
