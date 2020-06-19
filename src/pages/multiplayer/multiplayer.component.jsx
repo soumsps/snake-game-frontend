@@ -107,16 +107,18 @@ const MultiplayerPage = ({
   // runs every 16.67ms
   const update = useCallback((currentTime) => {
     drawSnake2(gameBoardRef.current, snakesData.current);
-    drawFood(gameBoardRef.current, foodPositionRef.current);
+    if (foodPositionRef.current) {
+      drawFood(gameBoardRef.current, foodPositionRef.current);
+    }
   }, []);
 
   const onRestartButtonPress = (snakeRef) => {
     snakeRef.current = { ...DEFAULT_SNAKE_DATA };
   };
 
-  useEffect(() => {
-    foodPositionRef.current = [4, 4];
-  }, []);
+  // useEffect(() => {
+  //   foodPositionRef.current = [4, 4];
+  // }, []);
 
   useEffect(() => {
     setBoardBlockSize(calculateBlockSize(browserWindowSize, boardSize));
